@@ -1,44 +1,56 @@
-enum Option<u32>{
-    None,
-    Some(u32)
+
+struct Circule{
+    radius:f32,
 }
 
-fn sum(v:&Vec<u32>)->Option<u32>{
-    let mut sum:u32=0;
-    let mut overflow_ind=0;
+struct  Triangle{
+    bottom:f32,
+    high:f32,
+}
 
-    for i in v{
-        if sum.overflowing_add(*i).1 {
-            overflow_ind=1;
-            break
-        }
-        sum=sum+i;      
-    }
+struct  Square{
+    edge_length:f32,
+}
 
-    match overflow_ind {
-      0=>Option::Some(sum),
-      _=>Option::None
+pub trait CalculateArea{
+   fn calculate(&self)->f32;
+}
+
+impl CalculateArea for Circule{
+    fn calculate(&self)->f32{
+        let pi:f32=3.14;
+        pi*self.radius*self.radius
     }
 }
 
+impl CalculateArea for Triangle{
+    fn calculate(&self)->f32{
+        self.bottom*self.high/2f32
+    }
+}
+
+impl CalculateArea for Square{
+    fn calculate(&self)->f32{
+        self.edge_length*self.edge_length
+    }
+}
+
+
+pub fn get_area<T:CalculateArea>(item:&T){
+    println!("area is {}", item.calculate());
+
+}
 
 fn main() {
+    let c=Circule{radius:5.3f32,};
+    get_area(&c);
 
-    let v1:Vec<u32>=vec![1,2,3,4];
-    let v2:Vec<u32>=vec![3,4,5,4294967295];
-   
+    let t=Triangle{bottom:10f32,high:8f32};
+    get_area(&t);
 
-    let result1=sum(&v1);
-    let result2=sum(&v2);
+    let s=Square{edge_length:50f32};
+    get_area(&s);
 
-     match result1{
-        Option::Some(x)=>println!("sum is {}",x),
-        Option::None=>println!("None")
-     }  
 
-     match result2{
-        Option::Some(x)=>println!("sum is {}",x),
-        Option::None=>println!("None")
-     }  
 
 }
